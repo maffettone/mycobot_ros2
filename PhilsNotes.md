@@ -1,5 +1,3 @@
-# Notes from Preliminary Work
-
 ## Need to set on RPi shell
 
 ```bash
@@ -147,3 +145,47 @@ Enable chrony to start on boot on the RPi:
 ```bash
 sudo systemctl enable chrony
 ```
+
+## Using MoveIt, Rviz & other GUIs
+By now, you should have a functioning dev container opened and ready to use. Be sure to run sanity checks before moving on.
+
+### Simple_GUI for RPi
+Launch simple_gui, this will only be able to run on the RPi
+
+```bash
+ros2 launch mycobot_280pi simple_gui.launch.py gui:='true' rviz:='false'
+```
+*Note: rviz may open even though it is set to false, close it anyways (most likely will crash RPi if left open too long)*
+
+You should see a simple gui in Chinese. Change angle values and hit the button below to move the robot.
+
+### Pub_Sub_driver GUI for Host machine and RPi
+This will allow you to control the robot from your host machine. You should see another simple GUI (this time in English). Changing the angles of joints or the status of the gripper should be made in Rviz and on the actual robot. *Rviz is not currently configured to display the gripper.```
+
+The subscriber will listen for instructions from the publsiher, similar to the talker and listener demo shown earlier.
+
+Run the subscriber driver on the RPi:
+
+```bash
+ros2 launch mycobot_280pi pub_sub_driver_gui.launch.py driver:='true' rviz:='false' gui:='false'
+```
+
+Run the publisher driver on the host machine:
+```bash
+ros2 launch mycobot_280pi pub_sub_driver_gui.launch.py driver:='false' rviz:='true' gui:='true'
+```
+
+### MoveIt
+
+This will allow you to move the robot in Rviz, create a plan, and execute it.
+
+On the RPi, run the action_driver:
+```bash
+ros2 run mycobot_280pi action_driver
+```
+
+On your host machine, run MoveIt:
+```bash
+ros2 launch mycobot_moveit_config moveit.launch.py
+```
+Drag the ball at the end of the robotic arm to move it to your desired position. Press the plan button to see a plan on how it plans to get from it's intial point to it's desired point. Then press 'Plan and Execute' to see it move.
